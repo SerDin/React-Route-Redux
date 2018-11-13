@@ -1,70 +1,88 @@
-import React from 'react'
-import './App.css'
-import { Route, Link } from 'react-router-dom'
 import Login from './components/Login'
 import News from './components/News'
 import Profile from './components/Profile'
 import Home from './components/Home'
 
-class App extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			login: 'root',
-			password: 'admin',
-			checkLogin: null
-		}
-	}
+import React from 'react'
+import {
+	BrowserRouter as Router,
+	Route,
+	Link,
+	withRouter,
+	Redirect
+} from 'react-router-dom'
 
-	// componentWillMount() {
-	// 	window.localStorage.setItem('login', 'root')
-	// 	window.localStorage.setItem('password', 'admin')
-	// }
-
-	checkLogin = () => {
-		console.log(this.state.checkLogin)
-		this.setState({ checkLogin: true })
-		console.log(this.state.checkLogin)
-	}
-
-	render() {
-		return (
-			<div>
-				<nav>
-					<ul>
-						<li>
-							<Link to="/">Home</Link>
-						</li>
-						<li>
-							<Link to="/news">News</Link>
-						</li>
-						<li>
-							<Link
-								to={this.state.checkLogin ? '/profile' : '/login'}
-							>
-								Profile
-							</Link>
-						</li>
-					</ul>
-				</nav>
-				<Route exact path="/" component={Home} />
-				<Route path="/news" component={News} />
-				<Route
-					path={'/profile'}
-					component={() => (
-						<Profile
-							login={this.state.login}
-							password={this.state.password}
-						/>
-					)}
-				/>
-				<Route
-					path="/login"
-					component={() => <Login checkLogin={this.checkLogin} />}
-				/>
-			</div>
-		)
+const fakeAuth = {
+	isAuthenticated: false,
+	authenticate(cb) {
+		this.isAuthenticated = true
+		setTimeout(cb, 100)
+	},
+	signout(cb) {
+		this.isAuthenticated = false
+		setTimeout(cb, 100)
 	}
 }
 
-export default App
+const PrivateRoute = ({ component: Component, ...rest }) => (
+	<Route
+		{...rest}
+		render={props =>
+			fakeAuth.isAuthenticated === true ? (
+				<Component {...props} />
+			) : (
+				<Redirect
+					to={{
+						pathname: '/login',
+						state: { from: props.location }
+					}}
+				/>
+			)
+		}
+	/>
+)
+
+const AuthButton = withRouter(({ history }) =>
+	fakeAuth.isAuthenticated ? (
+		<p>
+			Welcome!{' '}
+			<button
+				onClick={() => {
+					fakeAuth.signout(() => history.push('/'))
+				}}
+			>
+				Sign out
+			</button>
+		</p>
+	) : (
+		<p>You are not logged in.</p>
+	)
+)
+
+export default function AuthExample() {
+	return (
+		<Router>
+			<div>
+				<ul>
+					<li>
+						<Link to="/">Home</Link>
+					</li>
+					<li>
+						<Link to="/news">News</Link>
+					</li>
+					<li>
+						<Link to="/profile">Profile</Link>
+					</li>
+				</ul>{' '}
+				<AuthButton />
+				<Route exact path="/" component={Home} />
+				<Route path="/news" component={News} />
+				<Route
+					path="/login"
+					component={() => <Login fakeAuth={fakeAuth} />}
+				/>
+				<PrivateRoute path="/profile" component={() => <Profile />} />
+			</div>
+		</Router>
+	)
+}
