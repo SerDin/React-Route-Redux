@@ -55,7 +55,7 @@ const AuthButton = withRouter(({ history }) =>
 			</button>
 		</p>
 	) : (
-		<p>You are not logged in.</p>
+		<div>You is not logined</div>
 	)
 )
 

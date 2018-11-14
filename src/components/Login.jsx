@@ -1,5 +1,6 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
+import Logined from './Logined'
 
 class Login extends React.Component {
 	constructor(props) {
@@ -7,6 +8,11 @@ class Login extends React.Component {
 		this.state = {
 			redirectToReferrer: false
 		}
+	}
+
+	componentDidMount() {
+		window.localStorage.setItem('login', 'admin')
+		window.localStorage.setItem('password', '12345')
 	}
 
 	login = () => {
@@ -29,7 +35,8 @@ class Login extends React.Component {
 		return (
 			<div>
 				<p>You must log in to view the page</p>
-				<button onClick={this.login}>Log in</button>
+				<Logined login={this.login} />
+				{/* <button onClick={this.login}>Log in</button> */}
 			</div>
 		)
 	}
