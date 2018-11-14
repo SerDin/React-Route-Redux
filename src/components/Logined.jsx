@@ -8,10 +8,12 @@ class Logined extends React.Component {
 		this.handleSubmit = this.handleSubmit.bind(this)
 	}
 
+	//Присвоить каждому полю ввода значения input
 	handleChange(id, event) {
 		this.setState({ [id]: event.target.value })
 	}
 
+	// Логика проверки правильного ввода логина и пароля
 	handleSubmit(event) {
 		if (
 			window.localStorage.getItem('login').toLocaleLowerCase() ===
@@ -36,11 +38,13 @@ class Logined extends React.Component {
 						type="text"
 						value={this.state.loginName}
 						onChange={this.handleChange.bind(this, 'loginName')}
+						placeholder="Name"
 					/>
 					<input
 						type="text"
 						value={this.state.password}
 						onChange={this.handleChange.bind(this, 'password')}
+						placeholder="password"
 					/>
 				</label>
 				<input type="submit" value="Submit" />

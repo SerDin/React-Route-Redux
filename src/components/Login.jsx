@@ -10,11 +10,13 @@ class Login extends React.Component {
 		}
 	}
 
+	// Помещение логина и пароля в LocaleStage
 	componentDidMount() {
 		window.localStorage.setItem('login', 'admin')
 		window.localStorage.setItem('password', '12345')
 	}
 
+	// Доступ к странице пользователя
 	login = () => {
 		this.props.fakeAuth.authenticate(() => {
 			this.setState(() => ({
@@ -22,6 +24,7 @@ class Login extends React.Component {
 			}))
 		})
 	}
+
 	render() {
 		const { from } = window.location.state || {
 			from: { pathname: '/profile' }
@@ -36,7 +39,6 @@ class Login extends React.Component {
 			<div>
 				<p>You must log in to view the page</p>
 				<Logined login={this.login} />
-				{/* <button onClick={this.login}>Log in</button> */}
 			</div>
 		)
 	}
